@@ -1,0 +1,30 @@
+
+
+Real life scenario.
+
+Develop a web and mobile platform for their bussiness.
+
+1. E-commerce
+2. Display there product.
+3. for user or customers to browse for there goods.
+	- pictures
+	- name
+	- price
+	- rating
+	- recommendations (link to other complementary goods)
+4. users should have a cart to place their goods selected.
+5. users should be able to come back next time to continue shopping from where they stop.
+6. users should be able to place order.
+7. users should be able to receive email or sms of order placed.
+8. users should be able to pay online.
+	-accept card
+	- bank, 
+	- cash in pursue
+9. Reward should be available to loyal customers.
+10. customers should be rated. for better discount. 
+11. Other features will come along.
+12. vibrant color 
+13. searching must be smooth
+14. my site must be reactive, though don't know what it means, my son told me to add it.
+15. again must conform to all form factors (mobile, desktop, tab, labtops).
+16. the first wire-mesh
