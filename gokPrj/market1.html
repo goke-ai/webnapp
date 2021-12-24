@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="site.css" />
+  </head>
+  <body id="app">
+    <div class="container">
+      <h1>{{ title }}</h1>
+      <div v-for="p in products" class="card">
+        <div class="product-image">
+          <img
+            v-bind:src="p.imageUrl"
+            alt="product image"
+            title="product image: click to add new purchase"
+          />
+        </div>
+        <div class="product-text">
+          <div title="product name: click to add new purchase">
+            {{ p.name }}
+          </div>
+          <div title="product description: click to add new purchase">
+            {{ p.description}}
+          </div>
+        </div>
+        <div class="product-quantity" title="product quantity">
+          {{ quantity(p.stores) }}
+        </div>
+        <div class="product-store" title="product stores">
+          <ul>
+            <li
+              v-for="s in p.stores"
+              title="store name | quantity | price: click to edit purchase"
+            >
+              {{s.name}} | {{s.quantity}} | {{s.price}}
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <div class="tool-bar">
+          <img
+            id="img-add-product"
+            src="images/plus.svg"
+            alt="add product"
+            title="add product"
+            v-bind:class="isAdding"
+            v-on:click="onAdd"
+          />
+          <img
+            id="img-edit-product"
+            src="images/edit.svg"
+            alt="edit product"
+            title="edit product"
+          />
+          <img
+            id="img-cancel-product"
+            src="images/cancel.svg"
+            alt="cancel product"
+            title="cancel product"
+          />
+          <img
+            id="img-save-product"
+            src="images/save.svg"
+            alt="save product"
+            title="save product"
+          />
+          <img
+            id="img-delete-product"
+            src="images/delete.svg"
+            alt="delete product"
+            title="delete product"
+          />
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="market1.js"></script>
+  </body>
+</html>
