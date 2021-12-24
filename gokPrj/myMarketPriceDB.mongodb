@@ -1,0 +1,61 @@
+// MongoDB Playground
+// To disable this template go to Settings | MongoDB | Use Default Template For Playground.
+// Make sure you are connected to enable completions and to be able to run a playground.
+// Use Ctrl+Space ins'_id'e a snippet or a string literal to trigger completions.
+
+// Select the database to use.
+use('myMarketPriceDB');
+
+// The drop() command destroys all data from a collection.
+// Make sure you run it against the correct database and collection.
+db.markets.drop();
+
+// Insert a few documents into the sales collection.
+db.markets.insertMany([
+  {
+    '_id': 1,
+    'name': "Milo 250",
+    'description': "",
+    'quantity': 5,
+    'stores': [
+      { 'name': "Store 1", 'price': 100.0, 'quantity': 2, 'date': new Date(Date.now()) },
+      { 'name': "Store 2", 'price': 110.0, 'quantity': 1, 'date': new Date('2014-03-01T08:00:00Z') },
+      { 'name': "Store 4", 'price': 110.5, 'quantity': 2, 'date': new Date('2014-03-01T08:00:00Z') },
+    ],
+  },
+  {
+    '_id': 2,
+    'name': "Pineapple",
+    'description': "",
+    'quantity': 4,
+    'stores': [
+      { 'name': "Store 1", 'price': 30.0, 'quantity': 2, 'date': new Date('2014-03-01T08:00:00Z') },
+      { 'name': "Store 2", 'price': 110.0, 'quantity': 2, 'date': new Date('2014-03-01T08:00:00Z') },
+    ],
+  },
+  {
+    '_id': 3,
+    'name': "Tomato",
+    'description': "",
+    'quantity': 6,
+    'stores': [
+      { 'name': "Store 1", 'price': 101.99, 'quantity': 2, 'date': new Date('2014-03-01T08:00:00Z') },
+      { 'name': "Store 2", 'price': 110.0, 'quantity': 2, 'date': new Date('2014-03-01T08:00:00Z') },
+      { 'name': "Store 3", 'price': 110.5, 'quantity': 2, 'date': new Date('2014-03-01T08:00:00Z') },
+    ],
+  },
+]);
+
+// // Run a find command to view items sold on April 4th, 2014.
+// // db.sales.find({ date: { $gte: new Date('2014-04-04'), $lt: new Date('2014-04-05') } });
+
+// // Build an aggregation to view total sales for each product in 2014.
+// const aggregation = [
+//   { $match: { date: { $gte: new Date('2014-01-01'), $lt: new Date('2015-01-01') } } },
+//   { $group: { _'_id': '$item', totalSale'price': { $sum: { $multiply: [ '$price', '$'quantity' ] } } } }
+// ];
+
+// // Run the aggregation and open a cursor to the results.
+// // Use toArray() to exhaust the cursor to return the whole result set.
+// // You can use hasNext()/next() to iterate through the cursor page by page.
+// db.sales.aggregate(aggregation);
