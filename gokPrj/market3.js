@@ -68,7 +68,7 @@ const marketApp = {
 
   methods: {
     quantity(stores) {
-      return stores.reduce((T, q) => T + q.price, 0);
+      return stores.reduce((T, s) => T + s.quantity, 0);
     },
 
     unitPrice(store) {
@@ -95,6 +95,7 @@ const marketApp = {
     },
 
     onAdd() {
+      this.onReset();
       this.crudMode = 1;
     },
 

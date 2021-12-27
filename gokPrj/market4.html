@@ -26,14 +26,28 @@
             {{ p.description}}
           </div>
         </div>
-        <div class="product-quantity" title="product quantity">
-          {{ quantity(p.stores) }}
+        <div class="product-quantity">
+          <div title="increment product quantity">
+            <img
+              @click="onIncrement(p)"
+              src="images/plus.svg"
+              alt="increment"
+            />
+          </div>
+          <div title="product quantity">{{ quantity(p.stores) }}</div>
+          <div title="decrement product quantity">
+            <img
+              @click="onDecrement(p)"
+              src="images/minus.svg"
+              alt="decrement"
+            />
+          </div>
         </div>
         <div class="product-store" title="product stores">
           <ul>
             <li
-              v-for="s in cheapestStores(p.stores)"
               v-on:click="onEdit(p, s.id)"
+              v-for="s in cheapestStores(p.stores)"
               title="store name | quantity | price: click to edit purchase"
             >
               {{s.name}} | {{s.quantity}} | {{s.price}}
@@ -49,33 +63,39 @@
             src="images/plus.svg"
             alt="add product"
             title="add product"
+            v-bind:class="isAdding"
+            v-on:click="onAdd"
           />
           <img
             id="img-edit-product"
             src="images/edit.svg"
             alt="edit product"
             title="edit product"
+            v-bind:class="isEditing"
           />
           <img
             id="img-cancel-product"
             src="images/cancel.svg"
             alt="cancel product"
             title="cancel product"
+            v-on:click="onCancel"
           />
           <img
             id="img-save-product"
             src="images/save.svg"
             alt="save product"
             title="save product"
+            v-on:click="onSave"
           />
           <img
             id="img-delete-product"
             src="images/delete.svg"
             alt="delete product"
             title="delete product"
+            v-on:click="onDelete"
           />
         </div>
-        <div>
+        <div v-if="showForm">
           <form>
             <label for="productName">
               Product Name:
@@ -126,13 +146,13 @@
                 v-model="productStorePrice"
               />
             </label>
-            <br>
+            <br />
           </form>
         </div>
       </div>
     </div>
 
     <script src="https://unpkg.com/vue@next"></script>
-    <script src="market2.js"></script>
+    <script src="market4.js"></script>
   </body>
 </html>

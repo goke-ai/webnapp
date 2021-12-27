@@ -26,8 +26,22 @@
             {{ p.description}}
           </div>
         </div>
-        <div class="product-quantity" title="product quantity">
-          {{ quantity(p.stores) }}
+        <div class="product-quantity">
+          <div title="increment product quantity">
+            <img
+              @click="onIncrement(p)"
+              src="images/plus.svg"
+              alt="increment"
+            />
+          </div>
+          <div title="product quantity">{{ quantity(p.stores) }}</div>
+          <div title="decrement product quantity">
+            <img
+              @click="onDecrement(p)"
+              src="images/minus.svg"
+              alt="decrement"
+            />
+          </div>
         </div>
         <div class="product-store" title="product stores">
           <ul>
@@ -81,7 +95,7 @@
             v-on:click="onDelete"
           />
         </div>
-        <div>
+        <div v-if="showForm">
           <form>
             <label for="productName">
               Product Name:
@@ -132,7 +146,7 @@
                 v-model="productStorePrice"
               />
             </label>
-            <br>
+            <br />
           </form>
         </div>
       </div>

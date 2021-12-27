@@ -1,7 +1,14 @@
+class MyArray {
+  first(ar, n) {
+    return ar.slice(0, n);
+  }
+}
+
 const marketApp = {
   data() {
     return {
       title: "My Market App",
+      crudMode: 0,
       productId: 0,
       productName: "",
       productDescription: "",
@@ -57,7 +64,7 @@ const marketApp = {
 
   methods: {
     quantity(stores) {
-      return stores.reduce((T, q) => T + q.price, 0);
+      return stores.reduce((T, s) => T + s.quantity, 0);
     },
 
     unitPrice(store) {
@@ -69,6 +76,8 @@ const marketApp = {
     },
 
     cheapestStores(stores) {
+      var myArr = new MyArray();
+      // return myArr.first(stores, 1);
       return this.sortedStores(stores).slice(0, 2);
     },
 

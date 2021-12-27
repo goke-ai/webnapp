@@ -42,7 +42,15 @@ const marketApp = {
 
   methods: {
     quantity(stores) {
-      return stores.reduce((T, q) => T + q.price, 0);
+      // sum quantity
+      // var T = 0;
+      // for (const s of stores) {
+      //   T += s.quantity;
+      // }
+      // return T;
+
+      return stores.reduce((T, s) => T + s.quantity, 0);
+
     },
   },
 };

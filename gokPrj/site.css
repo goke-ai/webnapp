@@ -3,7 +3,7 @@ body {
   font-size: 0.9rem;
 }
 
-form{
+form {
   border: solid 1px gray;
   padding: 00.5em;
 }
@@ -15,7 +15,6 @@ form{
 .card {
   display: flex;
   gap: 0.5em;
-  /* justify-content: space-evenly; */
   align-items: center;
   border: solid 2px blueviolet;
   margin: 0.5em;
@@ -23,10 +22,6 @@ form{
   border-radius: 10px;
   background-color: darkviolet;
   color: white;
-}
-
-.card > * {
-  /* flex: 1; */
 }
 
 .card img {
@@ -38,7 +33,7 @@ form{
   flex-basis: 250px;
 }
 
-.card > div:nth-child(2) {
+.card > div:nth-child(2) > :first-child {
   font-size: 1.1em;
 }
 
@@ -47,11 +42,17 @@ form{
   margin-top: 0.5em;
   font-size: 0.8em;
   font-style: italic;
+  color: rgb(197, 197, 43);
 }
 
 .card > div:nth-child(3) {
   text-align: center;
   flex-basis: 100px;
+}
+
+.card > div:nth-child(3) img {
+  width: 2em;
+  height: 2em;
 }
 
 .card ul {
@@ -89,9 +90,9 @@ form{
 
 .tool-bar {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-around;
   height: 50px;
-  padding: 1em
+  padding: 1em;
 }
 
 .tool-bar img {
@@ -105,7 +106,6 @@ form{
 .tool-bar img.active {
   background-color: yellow;
 }
-
 
 /* .product-image {
   padding: 0 0.5em;
