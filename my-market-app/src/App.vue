@@ -4,6 +4,7 @@
 
 import { ref, computed } from "vue";
 import Product from "./components/Product.vue";
+import ProductForm from "./components/ProductForm.vue";
 
 const title = "My Market App";
 
@@ -18,7 +19,7 @@ var productStoreName = ref("");
 var productStoreQuantity = ref(0);
 var productStorePrice = ref(0);
 
-const products = [
+const products = ref([
   {
     id: 1,
     name: "Milo 250",
@@ -51,43 +52,171 @@ const products = [
       { id: 3, name: "Store 3", quantity: 4, price: 10.0 },
     ],
   },
-];
+]);
+
+const sortedProducts = computed(() => {
+  return products.value.sort((a, b) => quantity(b.stores) - quantity(a.stores));
+});
+
+const isAdding = computed(() => {
+  return { active: crudMode.value == 1 };
+});
+
+const isEditing = computed(() => {
+  return {
+    active: crudMode.value == 2,
+  };
+});
 
 function quantity(stores) {
   // sum
   return stores.reduce((T, q) => T + q.quantity, 0.0);
 }
 
-const sortedProducts = computed(() => {
-  return products.sort((a, b) => quantity(b.stores) - quantity(a.stores));
-});
+function unitPrice(store) {
+  return store.price / store.quantity;
+}
+
+function sortedStores(stores) {
+  return stores.sort((a, b) => unitPrice(a) - unitPrice(b));
+}
+
+function cheapestStores(stores) {
+  return sortedStores(stores); //.slice(0, 2);
+}
+
+function onIncrement(product) {
+  const store = cheapestStores(product.stores)[0];
+  store.quantity++;
+}
+
+function onDecrement(product) {
+  const store = cheapestStores(product.stores)[0];
+  store.quantity--;
+}
 
 function onReset() {
-  crudMode = 0;
+  crudMode.value = 0;
 
-  productId = 0;
-  productName = "";
-  productDescription = "";
-  productImageUrl = "";
-  productStoreId = 0;
-  productStoreName = "";
-  productStoreQuantity = 0;
-  productStorePrice = 0;
+  productId.value = 0;
+  productName.value = "";
+  productDescription.value = "";
+  productImageUrl.value = "";
+  productStoreId.value = 0;
+  productStoreName.value = "";
+  productStoreQuantity.value = 0;
+  productStorePrice.value = 0;
 }
 
 function onAdd() {
   showForm.value = true;
   onReset();
-  crudMode = 1;
+  crudMode.value = 1;
 }
 
-function onEdit(val) {
-  showForm.value = val;
+function onEdit(product, storeId, showform) {
+  crudMode.value = 2;
+
+  showForm.value = showform;
+
+  productId.value = product.id;
+  productName.value = product.name;
+  productDescription.value = product.description;
+  productImageUrl.value = product.imageUrl;
+
+  const store = product.stores.find((f) => f.id == storeId);
+  productStoreId.value = store.id;
+  productStoreName.value = store.name;
+  productStoreQuantity.value = store.quantity;
+  productStorePrice.value = store.price;
 }
 
 function onCancel() {
   onReset();
+  showForm.value = false;
+}
+
+function onDelete() {
+  crudMode.value = 3;
+
+  //
+  const product = products.value.find((f) => f.id == productId.value);
+
+  const store = product.stores.find((f) => f.id == productStoreId.value);
+  var idx = product.stores.indexOf(store);
+
+  product.stores.splice(idx, 1);
+
+  onReset();
   showForm = false;
+}
+
+function onSave() {
+  if (crudMode.value == 1) {
+    // new product
+    const product = {
+      id: 0,
+      name: productName.value,
+      description: productDescription.value,
+      imageUrl:
+        "./src/assets/" +
+        productName.value.replace(" ", "_").toLowerCase() +
+        ".jpg",
+      stores: [
+        {
+          id: 0,
+          name: productStoreName.value,
+          quantity: parseInt(productStoreQuantity.value),
+          price: parseFloat(productStorePrice.value),
+        },
+      ],
+    };
+
+    // get all stores
+    const allStores = [];
+    for (const p of products.value) {
+      for (const s of p.stores) {
+        if (allStores.some((x) => x.name === s.name)) {
+          continue;
+        }
+        allStores.push(s);
+      }
+    }
+
+    // fix store id
+    const s = allStores.find((f) => f.name == productStoreName.value);
+    if (s !== undefined) {
+      product.stores[0].id = s.id;
+    } else {
+      product.stores[0].id = allStores.length + 1;
+    }
+
+    // fix product id
+    // product exist
+    const p = products.value.find((f) => f.name === productName.value);
+    if (p === undefined) {
+      product.id = products.value.length + 1;
+      products.value.push(product);
+    } else {
+      product.id = p.id;
+      p.stores.push(product.stores[0]);
+    }
+  }
+
+  if (crudMode.value == 2) {
+    var p = products.value.find((f) => f.id == productId.value);
+    p.name = productName.value;
+    p.description = productDescription.value;
+
+    const s = p.stores.find((f) => f.id == productStoreId.value);
+    s.id = productStoreId.value;
+    s.name = productStoreName.value;
+    s.quantity = parseInt(productStoreQuantity.value);
+    s.price = parseFloat(productStorePrice.value);
+  }
+
+  onReset();
+  showForm.value = false;
 }
 </script>
 
@@ -99,100 +228,20 @@ function onCancel() {
     :product="p"
     :quantity="quantity(p.stores)"
     @edit="onEdit"
+    @increment="onIncrement"
+    @decrement="onDecrement"
   ></Product>
 
-  <div>
-    <div class="tool-bar">
-      <img
-        id="img-add-product"
-        src="./assets/plus.svg"
-        alt="add product"
-        title="add product"
-        @click="onAdd"
-      />
-      <img
-        id="img-edit-product"
-        src="./assets/edit.svg"
-        alt="edit product"
-        title="edit product"
-      />
-      <img
-        id="img-cancel-product"
-        src="./assets/cancel.svg"
-        alt="cancel product"
-        title="cancel product"
-        @click="onCancel"
-      />
-      <img
-        id="img-save-product"
-        src="./assets/save.svg"
-        alt="save product"
-        title="save product"
-        @click="onSave"
-      />
-      <img
-        id="img-delete-product"
-        src="./assets/delete.svg"
-        alt="delete product"
-        title="delete product"
-        @click="onDelete"
-      />
-    </div>
-    <div v-if="showForm">
-      <form>
-        <label for="productName">
-          Product Name:
-          <input
-            name="productName"
-            title="product name"
-            placeholder="Product Name"
-            v-model="productName"
-          />
-        </label>
-        <br />
-        <label for="productDescription">
-          Product Description:
-          <textarea
-            name="productDescription"
-            title="product description"
-            placeholder="Product Description"
-            v-model="productDescription"
-          ></textarea>
-        </label>
-        <hr />
-        <label for="productStore">
-          Product Store:
-          <input
-            name="productStore"
-            title="product store"
-            placeholder="Product Store"
-            v-model="productStoreName"
-          />
-        </label>
-        <br />
-        <label for="productQuantity">
-          Product Quantity:
-          <input
-            name="productQuantity"
-            title="product quantity"
-            placeholder="Product Quantity"
-            v-model="productStoreQuantity"
-          />
-        </label>
-        <br />
-        <label for="productPrice">
-          Product Price:
-          <input
-            name="productPrice"
-            title="product price"
-            placeholder="Product Price"
-            v-model="productStorePrice"
-          />
-        </label>
-        <br />
-      </form>
-    </div>
-  </div>
+  <ProductForm
+    :productId="productId"
+    :productName="productName"
+    :productDescription="productDescription"
+    :productImageUrl="productImageUrl"
+    :productStoreId="productStoreId"
+    :productStoreName="productStoreName"
+    :productStoreQuantity="productStoreQuantity"
+    :productStorePrice="productStorePrice"
+  ></ProductForm>
 </template>
 
 <style>

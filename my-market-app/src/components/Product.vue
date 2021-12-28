@@ -18,37 +18,19 @@ function cheapestStores(stores) {
   return sortedStores(stores); //.slice(0, 2);
 }
 
-var crudMode = ref(0);
-var productId = ref(0);
-var productName = ref("");
-var productDescription = ref("");
-var productImageUrl = ref("");
-var productStoreId = ref(0);
-var productStoreName = ref("");
-var productStoreQuantity = ref(0);
-var productStorePrice = ref(0);
-
-
-function onEdit(product, storeId) {
-  // crudMode.value = 2;
-  // showForm.value = true;
-  emit('edit', true);
-
-
-  // productId.value = product.id;
-  // productName.value = product.name;
-  // productDescription.value = product.description;
-  // productImageUrl.value = product.imageUrl;
-
-  // const store = product.stores.find((f) => f.id == storeId);
-  // productStoreId.value = store.id;
-  // productStoreName.value = store.name;
-  // productStoreQuantity.value = store.quantity;
-  // productStorePrice.value = store.price;
+function onIncrement(product) {
+  emit("increment", product);
 }
 
-const emit = defineEmits(['edit', 'delete'])
+function onDecrement(product) {
+  emit("decrement", product);
+}
 
+function onEdit(product, storeId) {
+  emit("edit", product, storeId, true);
+}
+
+const emit = defineEmits(["edit", "delete", "increment", "decrement"]);
 </script>
 
 <template>
@@ -70,11 +52,15 @@ const emit = defineEmits(['edit', 'delete'])
     </div>
     <div class="product-quantity">
       <div title="increment product quantity">
-        <img src="../assets/plus.svg" alt="increment" />
+        <img @click="onIncrement(product)" src="../assets/plus.svg" alt="increment" />
       </div>
       <div title="product quantity">{{ quantity }}</div>
       <div title="decrement product quantity">
-        <img src="../assets/minus.svg" alt="decrement" />
+        <img
+          @click="onDecrement(product)"
+          src="../assets/minus.svg"
+          alt="decrement"
+        />
       </div>
     </div>
     <div class="product-store" title="product stores">
