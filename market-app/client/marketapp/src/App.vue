@@ -6,6 +6,14 @@ import { ref, computed } from "vue";
 import ProductList from "./components/ProductList.vue";
 import ProductForm from "./components/ProductForm.vue";
 
+// const post = await fetch(`https://api.npms.io/v2/search?q=vue`).then(r => r.json());
+fetch(`http://localhost:3001/api/products`)
+  .then((r) => r.json())
+  .then((data) => {
+    console.log(data);
+    products.value = data;
+  });
+
 const title = "My Market App";
 
 const productModel = ref({
@@ -22,40 +30,7 @@ const productModel = ref({
 const showForm = ref(false);
 const crudMode = ref(0);
 
-const products = ref([
-  {
-    id: 1,
-    name: "Milo 250",
-    description: "Beverage drink",
-    imageUrl: "./src/assets/milo.jpg",
-    stores: [
-      { id: 1, name: "Store 1", quantity: 1, price: 10.0 },
-      { id: 2, name: "Store 2", quantity: 8, price: 100.0 },
-      { id: 4, name: "Store 4", quantity: 91, price: 1000.0 },
-    ],
-  },
-  {
-    id: 2,
-    name: "Pineapple",
-    description: "Fresh fruit drink with all the fibers.",
-    imageUrl: "./src/assets/pineapple.jpg",
-    stores: [
-      { id: 1, name: "Store 1", quantity: 2, price: 10.0 },
-      { id: 2, name: "Store 2", quantity: 2.5, price: 10.0 },
-    ],
-  },
-  {
-    id: 3,
-    name: "Plate",
-    description: "Ceramic flat plate for serving food",
-    imageUrl: "./src/assets/plate.jpg",
-    stores: [
-      { id: 1, name: "Store 1", quantity: 1, price: 10.0 },
-      { id: 2, name: "Store 2", quantity: 2, price: 10.0 },
-      { id: 3, name: "Store 3", quantity: 4, price: 10.0 },
-    ],
-  },
-]);
+const products = ref([]);
 
 const sortedProducts = computed(() => {
   return products.value.sort((a, b) => quantity(b.stores) - quantity(a.stores));
@@ -228,13 +203,6 @@ function onOverlayOff() {
   console.log("onOverlayOff");
   onReset();
 }
-
-// const post = await fetch(`https://api.npms.io/v2/search?q=vue`).then(r => r.json());
-fetch(`https://api.npms.io/v2/search?q=vue`)
-  .then((r) => r.json())
-  .then((data) => {
-    console.log(data);
-  });
 </script>
 
 <template>
