@@ -1,8 +1,18 @@
 <script setup>
 import { ref, computed } from "vue";
 
+// for the <input> tags
+const productId = ref(0);
+const productName = ref("");
+const productDescription = ref("");
+const productImageUrl = ref("");
+const productStoreId = ref(0);
+const productStoreName = ref("");
+const productStoreQuantity = ref(0);
+const productStorePrice = ref(0);
+
 const props = defineProps({
-  product: {},
+  model: {},
   showForm: Boolean,
   crudMode: Number,
 });
@@ -10,24 +20,24 @@ const props = defineProps({
 const emit = defineEmits(["added", "edited", "deleted"]);
 
 function onDelete() {
-  const model = {
-    productId: props.product.productId,
+  const formModel = {
+    productId: props.model.productId,
     productName: productName.value.value,
     productDescription: productDescription.value.value,
     productImageUrl: productDescription.value.value,
-    productStoreId: props.product.productStoreId,
+    productStoreId: props.model.productStoreId,
     productStoreName: productStoreName.value.value,
     productStoreQuantity: productStoreQuantity.value.value,
     productStorePrice: productStorePrice.value.value,
   };
 
-  emit("deleted", model);
+  emit("deleted", formModel);
 }
 
 function onSave() {
   if (props.crudMode == 1) {
     // new product
-    const model = {
+    const formModel = {
       productId: 0,
       productName: productName.value.value,
       productDescription: productDescription.value.value,
@@ -38,33 +48,24 @@ function onSave() {
       productStorePrice: productStorePrice.value.value,
     };
 
-    emit("added", model);
+    emit("added", formModel);
   }
 
   if (props.crudMode == 2) {
-    const model = {
-      productId: props.product.productId,
+    const formModel = {
+      productId: props.model.productId,
       productName: productName.value.value,
       productDescription: productDescription.value.value,
       productImageUrl: productDescription.value.value,
-      productStoreId: props.product.productStoreId,
+      productStoreId: props.model.productStoreId,
       productStoreName: productStoreName.value.value,
       productStoreQuantity: productStoreQuantity.value.value,
       productStorePrice: productStorePrice.value.value,
     };
 
-    emit("edited", model);
+    emit("edited", formModel);
   }
 }
-
-var productId = ref(0);
-var productName = ref("");
-var productDescription = ref("");
-var productImageUrl = ref("");
-var productStoreId = ref(0);
-var productStoreName = ref("");
-var productStoreQuantity = ref(0);
-var productStorePrice = ref(0);
 </script>
 
 <template>
@@ -77,7 +78,7 @@ var productStorePrice = ref(0);
         name="productName"
         title="product name"
         placeholder="Product Name"
-        :value="product.productName"
+        :value="model.productName"
       />
     </label>
     <br />
@@ -87,7 +88,7 @@ var productStorePrice = ref(0);
         ref="productDescription"
         title="product description"
         placeholder="Product Description"
-        :value="product.productDescription"
+        :value="model.productDescription"
       ></textarea>
     </label>
     <hr />
@@ -97,7 +98,7 @@ var productStorePrice = ref(0);
         ref="productStoreName"
         title="product store"
         placeholder="Product Store"
-        :value="product.productStoreName"
+        :value="model.productStoreName"
       />
     </label>
     <br />
@@ -107,7 +108,7 @@ var productStorePrice = ref(0);
         ref="productStoreQuantity"
         title="product quantity"
         placeholder="Product Quantity"
-        :value="product.productStoreQuantity"
+        :value="model.productStoreQuantity"
       />
     </label>
     <br />
@@ -117,7 +118,7 @@ var productStorePrice = ref(0);
         ref="productStorePrice"
         title="product price"
         placeholder="Product Price"
-        :value="product.productStorePrice"
+        :value="model.productStorePrice"
       />
     </label>
     <br />
@@ -143,5 +144,20 @@ var productStorePrice = ref(0);
 <style scoped>
 a {
   color: #42b983;
+}
+
+form {
+  border: solid 1px rgba(0, 0, 0, 0.8);
+  padding: 0.5em;
+  color: white;
+  background-color: rgba(150, 150, 150, 0.7);
+}
+
+form img {
+  background-color: violet;
+}
+
+form img:hover {
+  background-color: lime;
 }
 </style>

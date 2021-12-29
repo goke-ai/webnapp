@@ -66,9 +66,7 @@ const isAdding = computed(() => {
 });
 
 const isEditing = computed(() => {
-  return {
-    active: crudMode.value == 2,
-  };
+  return { active: crudMode.value == 2 };
 });
 
 function quantity(stores) {
@@ -224,6 +222,12 @@ function onDeleted(formModel) {
   onReset();
   showForm.value = false;
 }
+
+function onOverlayOff() {
+  showForm.value = false;
+  console.log("onOverlayOff");
+  onReset();
+}
 </script>
 
 <template>
@@ -263,16 +267,23 @@ function onDeleted(formModel) {
         @click="onCancel"
       />
     </div>
-    <div v-if="showForm">
-      <ProductForm
-        :showForm="showForm"
-        :crud-mode="crudMode"
-        :product="productModel"
-        :products="products"
-        @edited="onEdited"
-        @added="onAdded"
-        @deleted="onDeleted"
-      ></ProductForm>
+
+    <div
+      class="overlay"
+      :class="{ 'overlay-on': showForm }"
+      @click.self="onOverlayOff"
+    >
+      <div class="overlay-content">
+        <ProductForm
+          :showForm="showForm"
+          :crud-mode="crudMode"
+          :model="productModel"
+          :products="products"
+          @edited="onEdited"
+          @added="onAdded"
+          @deleted="onDeleted"
+        ></ProductForm>
+      </div>
     </div>
   </div>
 </template>
@@ -287,9 +298,30 @@ function onDeleted(formModel) {
   margin-top: 60px;
 }
 
-form {
-  border: solid 1px gray;
-  padding: 00.5em;
+.overlay {
+  position: fixed; /* Sit on top of the page content */
+  display: none; /* Hidden by default */
+  width: 100%; /* Full width (cover the whole page) */
+  height: 100%; /* Full height (cover the whole page) */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7); /* Black background with opacity */
+  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+  cursor: pointer; /* Add a pointer on hover */
+}
+
+.overlay-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+}
+
+.overlay-on {
+  display: block; /* Hidden by default */
 }
 
 .container {
