@@ -3,21 +3,24 @@
 // Check out https://v3.vuejproducts[0].stores[0].org/api/sfc-script-setuproducts[0].html#sfc-script-setup
 
 import { ref, computed } from "vue";
-import Product from "./components/Product.vue";
+import ProductList from "./components/ProductList.vue";
 import ProductForm from "./components/ProductForm.vue";
 
 const title = "My Market App";
 
-var showForm = ref(false);
-var crudMode = ref(0);
-var productId = ref(0);
-var productName = ref("");
-var productDescription = ref("");
-var productImageUrl = ref("");
-var productStoreId = ref(0);
-var productStoreName = ref("");
-var productStoreQuantity = ref(0);
-var productStorePrice = ref(0);
+const productModel = ref({
+  productId: 0,
+  productName: "",
+  productDescription: "",
+  productImageUrl: "",
+  productStoreId: 0,
+  productStoreName: "",
+  productStoreQuantity: 0,
+  productStorePrice: 0,
+});
+
+const showForm = ref(false);
+const crudMode = ref(0);
 
 const products = ref([
   {
@@ -95,40 +98,46 @@ function onDecrement(product) {
   store.quantity--;
 }
 
-function onReset() {
-  crudMode.value = 0;
-
-  productId.value = 0;
-  productName.value = "";
-  productDescription.value = "";
-  productImageUrl.value = "";
-  productStoreId.value = 0;
-  productStoreName.value = "";
-  productStoreQuantity.value = 0;
-  productStorePrice.value = 0;
-}
-
-function onAdd() {
-  showForm.value = true;
-  onReset();
-  crudMode.value = 1;
-}
-
 function onEdit(product, storeId, showform) {
   crudMode.value = 2;
 
   showForm.value = showform;
 
-  productId.value = product.id;
-  productName.value = product.name;
-  productDescription.value = product.description;
-  productImageUrl.value = product.imageUrl;
-
   const store = product.stores.find((f) => f.id == storeId);
-  productStoreId.value = store.id;
-  productStoreName.value = store.name;
-  productStoreQuantity.value = store.quantity;
-  productStorePrice.value = store.price;
+
+  productModel.value = {
+    productId: product.id,
+    productName: product.name,
+    productDescription: product.description,
+    productImageUrl: product.imageUrl,
+
+    productStoreId: store.id,
+    productStoreName: store.name,
+    productStoreQuantity: store.quantity,
+    productStorePrice: store.price,
+  };
+}
+
+const onReset = () => {
+  crudMode.value = 0;
+
+  productModel.value = {
+    productId: 0,
+    productName: "",
+    productDescription: "",
+    productImageUrl: "",
+
+    productStoreId: 0,
+    productStoreName: "",
+    productStoreQuantity: 0,
+    productStorePrice: 0.0,
+  };
+};
+
+function onAdd() {
+  onReset();
+  showForm.value = true;
+  crudMode.value = 1;
 }
 
 function onCancel() {
@@ -136,84 +145,81 @@ function onCancel() {
   showForm.value = false;
 }
 
-function onDelete() {
-  crudMode.value = 3;
+function onEdited(formModel) {
+  showForm.value = false;
+  crudMode.value = 0;
+  var p = products.value.find((f) => f.id == formModel.productId);
+  p.name = formModel.productName;
+  p.description = formModel.productDescription;
 
+  const s = p.stores.find((f) => f.id == formModel.productStoreId);
+  s.id = formModel.productStoreId;
+  s.name = formModel.productStoreName;
+  s.quantity = parseInt(formModel.productStoreQuantity);
+  s.price = parseFloat(formModel.productStorePrice);
+}
+
+function onAdded(formModel) {
+  showForm.value = false;
+  crudMode.value = 0;
+
+  const product = {
+    id: 0,
+    name: formModel.productName,
+    description: formModel.productDescription,
+    imageUrl:
+      "./src/assets/" +
+      formModel.productName.replace(" ", "_").toLowerCase() +
+      ".jpg",
+    stores: [
+      {
+        id: 0,
+        name: formModel.productStoreName,
+        quantity: parseInt(formModel.productStoreQuantity),
+        price: parseFloat(formModel.productStorePrice),
+      },
+    ],
+  };
+
+  // get all stores
+  const allStores = [];
+  for (const p of products.value) {
+    for (const s of p.stores) {
+      if (allStores.some((x) => x.name === s.name)) {
+        continue;
+      }
+      allStores.push(s);
+    }
+  }
+
+  // fix store id
+  const s = allStores.find((f) => f.name == formModel.productStoreName);
+  if (s !== undefined) {
+    product.stores[0].id = s.id;
+  } else {
+    product.stores[0].id = allStores.length + 1;
+  }
+
+  // fix product id
+  // product exist
+  const p = products.value.find((f) => f.name === formModel.productName);
+  if (p === undefined) {
+    product.id = products.value.length + 1;
+    products.value.push(product);
+  } else {
+    product.id = p.id;
+    p.stores.push(product.stores[0]);
+  }
+}
+
+function onDeleted(formModel) {
   //
-  const product = products.value.find((f) => f.id == productId.value);
+  const product = products.value.find((f) => f.id == formModel.productId);
 
-  const store = product.stores.find((f) => f.id == productStoreId.value);
+  const store = product.stores.find((f) => f.id == formModel.productStoreId);
   var idx = product.stores.indexOf(store);
 
   product.stores.splice(idx, 1);
-
-  onReset();
-  showForm = false;
-}
-
-function onSave() {
-  if (crudMode.value == 1) {
-    // new product
-    const product = {
-      id: 0,
-      name: productName.value,
-      description: productDescription.value,
-      imageUrl:
-        "./src/assets/" +
-        productName.value.replace(" ", "_").toLowerCase() +
-        ".jpg",
-      stores: [
-        {
-          id: 0,
-          name: productStoreName.value,
-          quantity: parseInt(productStoreQuantity.value),
-          price: parseFloat(productStorePrice.value),
-        },
-      ],
-    };
-
-    // get all stores
-    const allStores = [];
-    for (const p of products.value) {
-      for (const s of p.stores) {
-        if (allStores.some((x) => x.name === s.name)) {
-          continue;
-        }
-        allStores.push(s);
-      }
-    }
-
-    // fix store id
-    const s = allStores.find((f) => f.name == productStoreName.value);
-    if (s !== undefined) {
-      product.stores[0].id = s.id;
-    } else {
-      product.stores[0].id = allStores.length + 1;
-    }
-
-    // fix product id
-    // product exist
-    const p = products.value.find((f) => f.name === productName.value);
-    if (p === undefined) {
-      product.id = products.value.length + 1;
-      products.value.push(product);
-    } else {
-      product.id = p.id;
-      p.stores.push(product.stores[0]);
-    }
-  }
-
-  if (crudMode.value == 2) {
-    var p = products.value.find((f) => f.id == productId.value);
-    p.name = productName.value;
-    p.description = productDescription.value;
-
-    const s = p.stores.find((f) => f.id == productStoreId.value);
-    s.id = productStoreId.value;
-    s.name = productStoreName.value;
-    s.quantity = parseInt(productStoreQuantity.value);
-    s.price = parseFloat(productStorePrice.value);
-  }
 
   onReset();
   showForm.value = false;
@@ -222,7 +228,7 @@ function onSave() {
 
 <template>
   <h1 style="text-align: center">{{ title }}</h1>
-  <Product
+  <ProductList
     v-for="p in sortedProducts"
     :key="p.id"
     :product="p"
@@ -230,18 +236,45 @@ function onSave() {
     @edit="onEdit"
     @increment="onIncrement"
     @decrement="onDecrement"
-  ></Product>
+  ></ProductList>
 
-  <ProductForm
-    :productId="productId"
-    :productName="productName"
-    :productDescription="productDescription"
-    :productImageUrl="productImageUrl"
-    :productStoreId="productStoreId"
-    :productStoreName="productStoreName"
-    :productStoreQuantity="productStoreQuantity"
-    :productStorePrice="productStorePrice"
-  ></ProductForm>
+  <div>
+    <div class="tool-bar">
+      <img
+        id="img-add-product"
+        src="./assets/plus.svg"
+        alt="add product"
+        title="add product"
+        @click="onAdd"
+        :class="isAdding"
+      />
+      <img
+        id="img-edit-product"
+        src="./assets/edit.svg"
+        alt="edit product"
+        title="edit product"
+        :class="isEditing"
+      />
+      <img
+        id="img-cancel-product"
+        src="./assets/cancel.svg"
+        alt="cancel product"
+        title="cancel product"
+        @click="onCancel"
+      />
+    </div>
+    <div v-if="showForm">
+      <ProductForm
+        :showForm="showForm"
+        :crud-mode="crudMode"
+        :product="productModel"
+        :products="products"
+        @edited="onEdited"
+        @added="onAdded"
+        @deleted="onDeleted"
+      ></ProductForm>
+    </div>
+  </div>
 </template>
 
 <style>

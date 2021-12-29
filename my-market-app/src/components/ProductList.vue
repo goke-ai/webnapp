@@ -1,10 +1,12 @@
 <script setup>
 import { ref } from "vue";
 
-defineProps({
+const props = defineProps({
   product: {},
   quantity: Number,
 });
+
+const emit = defineEmits(["edit", "delete", "increment", "decrement"]);
 
 function unitPrice(store) {
   return store.price / store.quantity;
@@ -29,8 +31,6 @@ function onDecrement(product) {
 function onEdit(product, storeId) {
   emit("edit", product, storeId, true);
 }
-
-const emit = defineEmits(["edit", "delete", "increment", "decrement"]);
 </script>
 
 <template>
@@ -52,7 +52,11 @@ const emit = defineEmits(["edit", "delete", "increment", "decrement"]);
     </div>
     <div class="product-quantity">
       <div title="increment product quantity">
-        <img @click="onIncrement(product)" src="../assets/plus.svg" alt="increment" />
+        <img
+          @click="onIncrement(product)"
+          src="../assets/plus.svg"
+          alt="increment"
+        />
       </div>
       <div title="product quantity">{{ quantity }}</div>
       <div title="decrement product quantity">

@@ -1,53 +1,127 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
-defineProps({
-  msg: String,
-  productId: Number,
-  productName: String,
-  productDescription: String,
-  productImageUrl: String,
-  productStoreId: Number,
-  productStoreName: String,
-  productStoreQuantity: Number,
-  productStorePrice: Number,
+const props = defineProps({
+  product: {},
+  showForm: Boolean,
+  crudMode: Number,
 });
 
-// const productId = ref(0);
-// // const productName = ref("");
-// const productDescription = ref("");
-// const productImageUrl = ref("");
-// const productStoreId = ref(0);
-// const productStoreName = ref("");
-// const productStoreQuantity = ref(0);
-// const productStorePrice = ref(0);
+const emit = defineEmits(["added", "edited", "deleted"]);
+
+function onDelete() {
+  const model = {
+    productId: props.product.productId,
+    productName: productName.value.value,
+    productDescription: productDescription.value.value,
+    productImageUrl: productDescription.value.value,
+    productStoreId: props.product.productStoreId,
+    productStoreName: productStoreName.value.value,
+    productStoreQuantity: productStoreQuantity.value.value,
+    productStorePrice: productStorePrice.value.value,
+  };
+
+  emit("deleted", model);
+}
+
+function onSave() {
+  if (props.crudMode == 1) {
+    // new product
+    const model = {
+      productId: 0,
+      productName: productName.value.value,
+      productDescription: productDescription.value.value,
+      productImageUrl: productDescription.value.value,
+      productStoreId: 0,
+      productStoreName: productStoreName.value.value,
+      productStoreQuantity: productStoreQuantity.value.value,
+      productStorePrice: productStorePrice.value.value,
+    };
+
+    emit("added", model);
+  }
+
+  if (props.crudMode == 2) {
+    const model = {
+      productId: props.product.productId,
+      productName: productName.value.value,
+      productDescription: productDescription.value.value,
+      productImageUrl: productDescription.value.value,
+      productStoreId: props.product.productStoreId,
+      productStoreName: productStoreName.value.value,
+      productStoreQuantity: productStoreQuantity.value.value,
+      productStorePrice: productStorePrice.value.value,
+    };
+
+    emit("edited", model);
+  }
+}
+
+var productId = ref(0);
+var productName = ref("");
+var productDescription = ref("");
+var productImageUrl = ref("");
+var productStoreId = ref(0);
+var productStoreName = ref("");
+var productStoreQuantity = ref(0);
+var productStorePrice = ref(0);
 </script>
 
 <template>
-  <div>
+  <form>
+    <label for="productName">
+      Product Name:
+      <input
+        type="text"
+        ref="productName"
+        name="productName"
+        title="product name"
+        placeholder="Product Name"
+        :value="product.productName"
+      />
+    </label>
+    <br />
+    <label for="productDescription">
+      Product Description:
+      <textarea
+        ref="productDescription"
+        title="product description"
+        placeholder="Product Description"
+        :value="product.productDescription"
+      ></textarea>
+    </label>
+    <hr />
+    <label for="productStore">
+      Product Store:
+      <input
+        ref="productStoreName"
+        title="product store"
+        placeholder="Product Store"
+        :value="product.productStoreName"
+      />
+    </label>
+    <br />
+    <label for="productQuantity">
+      Product Quantity:
+      <input
+        ref="productStoreQuantity"
+        title="product quantity"
+        placeholder="Product Quantity"
+        :value="product.productStoreQuantity"
+      />
+    </label>
+    <br />
+    <label for="productPrice">
+      Product Price:
+      <input
+        ref="productStorePrice"
+        title="product price"
+        placeholder="Product Price"
+        :value="product.productStorePrice"
+      />
+    </label>
+    <br />
     <div class="tool-bar">
-      <img
-        id="img-add-product"
-        src="../assets/plus.svg"
-        alt="add product"
-        title="add product"
-        @click="onAdd"
-        :class="isAdding"
-      />
-      <img
-        id="img-edit-product"
-        src="../assets/edit.svg"
-        alt="edit product"
-        title="edit product"
-        :class="isEditing"
-      />
-      <img
-        id="img-cancel-product"
-        src="../assets/cancel.svg"
-        alt="cancel product"
-        title="cancel product"
-        @click="onCancel"
-      />
       <img
         id="img-save-product"
         src="../assets/save.svg"
@@ -63,61 +137,7 @@ defineProps({
         @click="onDelete"
       />
     </div>
-    <div v-if="showForm">
-      <form>
-        <label for="productName">
-          Product Name:
-          <input
-            name="productName"
-            title="product name"
-            placeholder="Product Name"
-            v-model="productName"
-          />
-        </label>
-        <br />
-        <label for="productDescription">
-          Product Description:
-          <textarea
-            name="productDescription"
-            title="product description"
-            placeholder="Product Description"
-            v-model="productDescription"
-          ></textarea>
-        </label>
-        <hr />
-        <label for="productStore">
-          Product Store:
-          <input
-            name="productStore"
-            title="product store"
-            placeholder="Product Store"
-            v-model="productStoreName"
-          />
-        </label>
-        <br />
-        <label for="productQuantity">
-          Product Quantity:
-          <input
-            name="productQuantity"
-            title="product quantity"
-            placeholder="Product Quantity"
-            v-model="productStoreQuantity"
-          />
-        </label>
-        <br />
-        <label for="productPrice">
-          Product Price:
-          <input
-            name="productPrice"
-            title="product price"
-            placeholder="Product Price"
-            v-model="productStorePrice"
-          />
-        </label>
-        <br />
-      </form>
-    </div>
-  </div>
+  </form>
 </template>
 
 <style scoped>
