@@ -1,6 +1,14 @@
 <script setup>
 import { ref, computed } from "vue";
 
+const file = ref(null)
+
+        // const handleFileUpload = async() => {
+           // debugger;
+           // console.log("selected file",file.value.files)
+            //Upload to server
+        // }
+
 // for the <input> tags
 const productId = ref(0);
 const productName = ref("");
