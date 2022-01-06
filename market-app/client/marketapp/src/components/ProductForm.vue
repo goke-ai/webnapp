@@ -73,6 +73,13 @@ function onSave() {
 
 <template>
   <form>
+    <div>
+      <label>File
+        <input type="file" id="file" ref="file" v-on:change="onChangeFileUpload()"/>
+      </label>
+        <!-- <button v-on:click="submitForm()">Upload</button> -->
+    </div>
+    <br />
     <label for="productName">
       Product Name:
       <input
