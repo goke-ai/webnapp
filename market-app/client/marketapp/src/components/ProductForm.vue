@@ -1,13 +1,28 @@
 <script setup>
 import { ref, computed } from "vue";
 
-const file = ref(null)
+const file = ref<File | null>();
+        const form = ref<HTMLFormElement>();
 
-        // const handleFileUpload = async() => {
-           // debugger;
-           // console.log("selected file",file.value.files)
-            //Upload to server
-        // }
+        function onFileChanged($event: Event) {
+            const target = $event.target as HTMLInputElement;
+            if (target && target.files) {
+                file.value = target.files[0];
+            }
+        }
+
+        async function saveImage() {
+            if (file.value) {
+                try {
+                // save file.value
+                } catch (error) {
+                    console.error(error);
+                    form.value?.reset();
+                    file.value = null;
+                } finally {
+                }
+            }
+        };
 
 // for the <input> tags
 const productId = ref(0);
@@ -81,12 +96,15 @@ function onSave() {
 
 <template>
   <form>
-    <div>
-      <label>File
-        <input type="file" id="file" ref="file" v-on:change="onChangeFileUpload()"/>
-      </label>
-        <!-- <button v-on:click="submitForm()">Upload</button> -->
-    </div>
+    <label>File
+      <input
+        type="file"
+        @change="onFileChanged($event)"
+        accept="image/*"
+        capture
+      />
+    </label>
+    
     <br />
     <label for="productName">
       Product Name:
